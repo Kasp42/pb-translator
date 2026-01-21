@@ -16,7 +16,6 @@
 {
   'use strict'
 
-  // TODO: Load translations from remote by button.
   const TRANSLATION_URL = 'https://raw.githubusercontent.com/Kasp42/pb-translator/master/translations/'
 
   const DATA_URL_ORIGINAL = 'https://pathbuilder2e-data.b-cdn.net/'
@@ -31,9 +30,6 @@
   const LS_KEY = 'pathbuilder_translations'
   const LS_LANG_KEY = 'pathbuilder_lang'
 
-  const TABLE_PREFIX_HIDE = [
-    'sqlite_autoindex_'
-  ]
   const TABLE_COLUMN_SUPPORT = [
     'name',
     'description',
@@ -483,7 +479,9 @@
       dom_sidebar.appendChild(dom_list)
 
       const a_table_names = Object.keys(a_tables)
-      .filter((t) => TABLE_PREFIX_HIDE.indexOf(t) === -1)
+      .filter((t) => {
+        return !t.startsWith('sqlite_autoindex_')
+      })
       .sort((a, b) => a.localeCompare(b))
 
       a_table_names.forEach((text_table) =>
