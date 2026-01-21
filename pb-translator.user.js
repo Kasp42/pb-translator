@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Pathbuilder2e translator
 // @namespace    https://pathbuilder2e.com/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Local translation layer + grid viewer + cell translation editor + apply to IndexedDB
 // @author       Kasp42
 // @match        https://pathbuilder2e.com/*
@@ -417,6 +417,22 @@
 
     const dom_title = createEl('div', 'font-weight:700;margin-right:10px;', 'PB2E Translator')
 
+    const dom_update = createEl('button', 'width: auto;', 'Update Translations From GitHub');
+    dom_update.onclick = async () => {
+      const o_response = await fetch(TRANSLATION_URL+currentLangGet()+'.json')
+
+      if (!o_response.ok)
+        throw new Error('Failed to fetch: ' + o_response.status);
+
+      const a_response = await o_response.json();
+
+      const a_translation = translationsLoad();
+      a_translation[currentLangGet()] = a_response;
+      translationsSave(a_translation);
+
+      indexedDBPatch(currentLangGet());
+    }
+
     const dom_data_select = document.createElement('select')
     DATA_AVAILABLE.forEach((text_data) =>
     {
@@ -447,7 +463,7 @@
       indexedDBPatch(currentLangGet())
     }
 
-    dom_top_bar.append(dom_title, dom_data_select, dom_close, dom_status)
+    dom_top_bar.append(dom_title, dom_update, dom_data_select, dom_close, dom_status)
 
     dom_panel.appendChild(dom_sidebar)
     dom_panel.appendChild(dom_editor)
